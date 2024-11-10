@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Settings, MoreVertical } from "lucide-react";
 import { ChatList } from "./chat-list";
+import { SideFooter } from "./side-footer";
 
 export function LeftSidebar() {
   const chats = Array.from({ length: 100 }, (_, i) => ({
@@ -10,11 +11,11 @@ export function LeftSidebar() {
     name: `User ${i + 1}`,
     lastMessage: "Latest message preview...",
     time: `${i + 1}h`,
-    isOnline: i % 2 === 0, // Chọn ngẫu nhiên để hiển thị trạng thái online
+    isOnline: i % 2 === 0,
   }));
 
   return (
-    <div className="w-80 border-r border-gray-200">
+    <div className="w-80 border-r border-gray-200 flex flex-col h-full">
       <div className="flex h-16 items-center justify-between px-4">
         <h1 className="text-xl font-semibold">Đoạn chat</h1>
         <div className="flex gap-2">
@@ -35,8 +36,9 @@ export function LeftSidebar() {
           />
         </div>
       </div>
-      {/* Sử dụng ChatList ở đây */}
       <ChatList chats={chats} />
+      {/* Thêm SideFooter ở đây */}
+      <SideFooter />
     </div>
   );
 }
