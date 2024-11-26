@@ -6,6 +6,8 @@ interface Message {
   content: string;
   timestamp: string;
   isUnread: boolean;
+  isSent: boolean;
+  
 }
 
 interface MessageListProps {
@@ -22,6 +24,7 @@ const MessageList: FC<MessageListProps> = ({ messages }) => {
           timestamp={message.timestamp}
           isUnread={message.isUnread}
           isLastMessage={index === messages.length - 1}
+          isSent={message.isSent}
         />
       ))}
     </div>

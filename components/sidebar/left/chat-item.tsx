@@ -24,7 +24,7 @@ export function ChatItem({
         <Image
           alt="Avatar"
           className="h-12 w-12 rounded-full"
-          src="/placeholder.svg"
+          src=""
           width={50}
           height={50}
         />

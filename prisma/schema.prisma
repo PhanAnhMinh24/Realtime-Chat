@@ -1,0 +1,194 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  relationMode = "prisma"
+}
+
+// Define enums at the top of your schema
+enum FriendStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  FILE
+}
+
+enum ReportType {
+  SPAM
+  ABUSE
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+}
+
+enum GroupRole {
+  ADMIN
+  MEMBER
+}
+
+model Users {
+  id               String             @id @default(uuid())
+  email            String             @unique @db.VarChar(255)
+  password_hash    String             @db.VarChar(255) // hashed password instead of password
+  first_name       String             @db.VarChar(20)
+  last_name        String             @db.VarChar(20)
+  avatar_url       String?            @db.VarChar(255)
+  is_active        Boolean
+  is_online        Boolean
+  last_seen        DateTime?
+  is_reported      Boolean
+  is_blocked       Boolean
+  preferences      String?
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  deleted_at       DateTime?          // Soft delete
+  BlockList        BlockList[]        @relation("UserBlockList")
+  BlockedBy        BlockList[]        @relation("UserBlocked")
+  Friends          Friends[]          @relation("UserFriends")
+  FriendOf         Friends[]          @relation("UserFriendOf")
+  SentMessages     Messages[]         @relation("Sender")
+  ReceivedMessages Messages[]         @relation("Receiver")
+  ReportsFiled     Reports[]          @relation("Reporter")
+  ReportsAgainst   Reports[]          @relation("ReportedUser")
+  GroupsCreated    Groups[]           @relation("GroupCreator")
+  Groups           GroupParticipants[]
+}
+
+model BlockList {
+  id              String   @id @default(uuid())
+  users_id        String
+  blocked_user_id String
+  created_at      DateTime @default(now())
+
+  User            Users @relation("UserBlockList", fields: [users_id], references: [id])
+  BlockedUser     Users @relation("UserBlocked", fields: [blocked_user_id], references: [id])
+
+  @@index([users_id])
+  @@index([blocked_user_id])
+}
+
+model Friends {
+  id           String       @id @default(uuid())
+  user_id      String
+  friend_id    String
+  created_at   DateTime     @default(now())
+  accepted_at  DateTime?
+  status       FriendStatus
+
+  User         Users        @relation("UserFriends", fields: [user_id], references: [id])
+  Friend       Users        @relation("UserFriendOf", fields: [friend_id], references: [id])
+
+  @@unique([user_id, friend_id])
+  @@index([friend_id])
+}
+
+model Conversation {
+  id            String     @id @default(uuid())
+  group_id      String?
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+  is_deleted    Boolean
+  Group         Groups?    @relation(fields: [group_id], references: [id])
+  Messages      Messages[]
+
+  @@index([group_id])
+}
+
+model Messages {
+  id               String      @id @default(uuid())
+  conversation_id  String
+  sender_id        String
+  receiver_id      String
+  message_content  String
+  message_type     MessageType
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+  deleted_at       DateTime?
+  edited_at        DateTime?
+  is_edited        Boolean
+  is_deleted       Boolean
+
+  Conversation     Conversation @relation(fields: [conversation_id], references: [id])
+  Sender           Users        @relation("Sender", fields: [sender_id], references: [id])
+  Receiver         Users        @relation("Receiver", fields: [receiver_id], references: [id])
+  Attachments      Attachments[]
+
+  @@index([conversation_id, sender_id])
+  @@index([sender_id, receiver_id])
+  @@index([receiver_id])
+}
+
+model Attachments {
+  id         String    @id @default(uuid())
+  message_id String
+  file_url   String    @db.VarChar(255)
+  file_type  MessageType
+  file_size  Int
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  Message    Messages  @relation(fields: [message_id], references: [id])
+
+  @@index([message_id])
+}
+
+model Reports {
+  id              String     @id @default(uuid())
+  reporter_id     String
+  reported_user_id String
+  report_type     ReportType
+  notes           String?
+  status          ReportStatus
+  created_at      DateTime   @default(now())
+  updated_at      DateTime   @updatedAt
+
+  Reporter        Users      @relation("Reporter", fields: [reporter_id], references: [id])
+  ReportedUser    Users      @relation("ReportedUser", fields: [reported_user_id], references: [id])
+
+  @@index([reporter_id])
+  @@index([reported_user_id])
+}
+
+model Groups {
+  id                String            @id @default(uuid())
+  group_name        String            @db.VarChar(40)
+  group_description String?           // Optional field for group description
+  group_avatar_url  String?           @db.VarChar(255)
+  created_by        String
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @updatedAt
+
+  Creator           Users             @relation("GroupCreator", fields: [created_by], references: [id])
+  Participants      GroupParticipants[]
+  Conversations     Conversation[]
+
+  @@index([created_by])
+}
+
+model GroupParticipants {
+  id         String    @id @default(uuid())
+  group_id   String
+  user_id    String
+  role       GroupRole
+  joined_at  DateTime  @default(now())
+
+  Group      Groups    @relation(fields: [group_id], references: [id])
+  User       Users     @relation(fields: [user_id], references: [id])
+
+  @@index([group_id])
+  @@index([user_id])
+}
