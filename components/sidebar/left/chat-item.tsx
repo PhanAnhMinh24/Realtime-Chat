@@ -1,44 +1,69 @@
-import Image from "next/image";
+"use client";
+
+import { User } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+import axios from "axios";
+import Avatar from "@/components/message/avatar";
+import { Clock, Circle } from "lucide-react";
 
 interface ChatItemProps {
-  id: number;
-  name: string;
-  lastMessage: string;
-  time: string;
-  isOnline?: boolean;
+  data: User;
+  lastMessage?: string;
+  lastMessageTime?: Date;
 }
 
-export function ChatItem({
-  id,
-  name,
+const ChatItem: React.FC<ChatItemProps> = ({
+  data,
   lastMessage,
-  time,
-  isOnline,
-}: ChatItemProps) {
+  lastMessageTime,
+}) => {
+  const router = useRouter();
+  const [, setIsLoading] = useState(false);
+
+  const handleClick = useCallback(() => {
+    setIsLoading(true);
+    axios
+      .post("/api/conversations", {
+        userId: data.id,
+      })
+      .then((response) => {
+        router.push(`/conversations/${response.data.id}`);
+      })
+      .finally(() => setIsLoading(false));
+  }, [data, router]);
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
   return (
     <div
-      key={id}
-      className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100"
+      onClick={handleClick}
+      className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-neutral-100 rounded-lg transition cursor-pointer"
     >
-      <div className="relative">
-        <Image
-          alt="Avatar"
-          className="h-12 w-12 rounded-full"
-          src=""
-          width={50}
-          height={50}
-        />
-        {isOnline && (
-          <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 ring-2 ring-white" />
-        )}
-      </div>
-      <div className="flex-1 overflow-hidden">
-        <div className="flex items-center justify-between">
-          <p className="font-medium">{name}</p>
-          <span className="text-xs text-gray-500">{time}</span>
+      <Avatar user={data} />
+      <div className="min-w-0 flex-1">
+        <div className="focus:outline-none">
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-medium text-gray-900">{data.name}</p>
+            {lastMessageTime && (
+              <span className="text-xs text-gray-500 flex items-center">
+                <Clock className="w-3 h-3 mr-1" />
+                {formatTime(lastMessageTime)}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center">
+            <Circle className={`w-2 h-2 mr-2 text-green-500`} />
+            <p className="text-sm text-gray-500 truncate">
+              {lastMessage || "No messages yet"}
+            </p>
+          </div>
         </div>
-        <p className="truncate text-sm text-gray-500">{lastMessage}</p>
       </div>
     </div>
   );
-}
+};
+
+export default ChatItem;
