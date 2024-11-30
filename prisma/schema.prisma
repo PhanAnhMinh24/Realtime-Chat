@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider    = "postgresql"
+  url         = env("DATABASE_URL")
+  directUrl   = env("DIRECT_URL")
+  relationMode = "prisma"
+}
+
+// Define enums at the top of your schema
+enum FriendStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  FILE
+}
+
+enum ReportType {
+  SPAM
+  ABUSE
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+}
+
+enum GroupRole {
+  ADMIN
+  MEMBER
+}
+
+model User {
+  id              String    @id @default(uuid()) @map("_id")
+  name            String?
+  email           String?   @unique
+  emailVerified   DateTime?
+  image           String?
+  hashedPassword  String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  conversationIds String[]
+  conversations   Conversation[] @relation("UserConversations")
+
+  seenMessageIds  String[]
+  seenMessages    Message[] @relation("SeenMessages")
+
+  accounts        Account[]
+  messages        Message[]
+
+  friends         Friends[]       @relation("UserFriends")
+  friendOf        Friends[]       @relation("FriendOfUser")
+
+  blockedUsers    BlockList[]     @relation("Blocker")
+  blockedByUsers  BlockList[]     @relation("Blocked")
+  groupParticipations GroupParticipants[] 
+}
+
+model Account {
+  id                  String  @id @default(uuid()) @map("_id")
+  userId              String
+  type                String
+  provider            String
+  providerAccountId   String
+  refresh_token       String?
+  access_token        String?
+  expires_at          Int?
+  token_type          String?
+  scope               String?
+  id_token            String?
+  session_state       String?
+
+  user                User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+model Conversation {
+  id              String   @id @default(uuid()) @map("_id")
+  createdAt       DateTime @default(now())
+  lastMessageAt   DateTime @default(now())
+  name            String?
+  isGroup         Boolean?
+
+  messagesIds     String[]
+  messages        Message[] @relation("ConversationMessages") // Quan hệ ở đây
+  userIds         String[]
+  users           User[]    @relation("UserConversations")
+}
+
+model Message {
+  id              String     @id @default(uuid()) @map("_id")
+  body            String?
+  image           String?
+  createdAt       DateTime   @default(now())
+
+  seenIds         String[]
+  seen            User[]     @relation("SeenMessages")
+
+  conversationId  String
+  conversation    Conversation @relation("ConversationMessages", fields: [conversationId], references: [id], onDelete: Cascade) // Đối ứng ở đây
+
+  senderId        String
+  sender          User       @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  attachments     Attachments[]
+
+  @@index([senderId])
+  @@index([conversationId])
+}
+
+model BlockList {
+  id        String   @id @default(uuid()) @map("_id")
+  blockerId String
+  blockedId String
+
+  blocker   User     @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked   User     @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+  @@index([blockedId])
+}
+
+model Friends {
+  id        String        @id @default(uuid()) @map("_id")
+  userId    String
+  friendId  String
+  status    FriendStatus  @default(PENDING)
+
+  user      User          @relation("UserFriends", fields: [userId], references: [id], onDelete: Cascade)
+  friend    User          @relation("FriendOfUser", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+  @@index([friendId])
+}
+
+model Attachments {
+  id          String       @id @default(uuid()) @map("_id")
+  messageId   String
+  type        MessageType
+  url         String
+
+  message     Message      @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([messageId])
+}
+
+model Groups {
+  id          String       @id @default(uuid()) @map("_id")
+  name        String
+  description String?
+  imageUrl    String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  participants GroupParticipants[]
+}
+
+model GroupParticipants {
+  id          String       @id @default(uuid()) @map("_id")
+  groupId     String
+  userId      String
+  role        GroupRole    @default(MEMBER)
+  joinedAt    DateTime     @default(now())
+
+  group       Groups       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([userId])
+}
