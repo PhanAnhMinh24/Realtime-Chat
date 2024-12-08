@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+"use client";
+
 import { FullMessageType } from "@/app/types";
 import Avatar from "@/components/message/avatar";
 import { User } from "@prisma/client";
 import clsx from "clsx";
 import { format } from "date-fns";
 import Image from "next/image";
+import { useState } from "react";
+import ImageModal from "./image-modal";
 
 interface MessageBoxProps {
   data: FullMessageType;
@@ -17,7 +21,12 @@ const MessageBox: React.FC<MessageBoxProps> = ({
   isLast,
   currentUser,
 }) => {
+  const [imageModalOpen, setImageModalOpen] = useState(false);
   const isOwn = currentUser?.email === data?.sender?.email;
+  const seenList = (data.seen || [])
+    .filter((user) => user.email !== data?.sender?.email)
+    .map((user) => user.name)
+    .join(", ");
 
   const container = clsx("flex gap-3 p-4 items-start", isOwn && "justify-end");
 
@@ -50,8 +59,14 @@ const MessageBox: React.FC<MessageBoxProps> = ({
 
         {/* Tin nhắn */}
         <div className={message}>
+          <ImageModal
+            src={data.image}
+            isOpen={imageModalOpen}
+            onClose={() => setImageModalOpen(false)}
+          />
           {data.image ? (
             <Image
+              onClick={() => setImageModalOpen(true)}
               alt="Image"
               height="288"
               width="288"
@@ -68,6 +83,17 @@ const MessageBox: React.FC<MessageBoxProps> = ({
             <div>{data.body}</div>
           )}
         </div>
+        {isLast && isOwn && seenList.length > 0 && (
+          <div
+            className="
+              text-xs
+              font-light
+              text-gray-500
+            "
+          >
+            {`Seen by ${seenList}`}
+          </div>
+        )}
       </div>
     </div>
   );

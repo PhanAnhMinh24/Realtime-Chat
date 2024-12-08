@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Avatar from "@/components/message/avatar";
 import { User } from "@prisma/client";
 import { format } from "date-fns";
+import AvatarGroup from "@/components/message/avatar-group";
 
 // Define the props including currentUser
 interface ConversationBoxProps {
@@ -81,12 +82,11 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
         selected ? "bg-neutral-100" : "bg-white"
       )}
     >
-      {/* Conditionally render Avatar if otherUser exists */}
-      {otherUser ? (
+      {data.isGroup ? (
+        <AvatarGroup users={data.users} />
+      ) : otherUser ? (
         <Avatar user={otherUser} />
-      ) : (
-        <div className="w-10 h-10 bg-gray-300 rounded-full" /> // Fallback placeholder
-      )}
+      ) : null}
 
       <div className="min-w-0 flex-1">
         <div className="focus:outline-none">

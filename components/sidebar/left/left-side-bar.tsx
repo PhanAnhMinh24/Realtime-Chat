@@ -1,13 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button } from "@/components/ui/button";
+// components/left-sidebar.tsx
+
 import { Input } from "@/components/ui/input";
-import { Search, Settings, MoreVertical } from "lucide-react";
+import { Search } from "lucide-react";
 import { SideFooter } from "./side-footer";
 import ConversationList from "@/app/conversations/components/conversations-list";
 import getConversations from "@/lib/get-conversations";
 import { CurrentUser } from "@/lib/current-user";
 import getUsers from "@/lib/get-users";
 import ChatList from "./chat-list";
+import HeaderButtons from "./header"; 
 
 export async function LeftSidebar({
   children,
@@ -21,15 +22,9 @@ export async function LeftSidebar({
     <div className="w-80 border-r border-gray-200 flex flex-col h-full">
       {/* Header */}
       <div className="flex h-16 items-center justify-between px-4">
-        <h1 className="text-xl font-semibold">Đoạn chat</h1>
-        <div className="flex gap-2">
-          <Button variant="ghost" size="icon">
-            <Settings className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon">
-            <MoreVertical className="h-5 w-5" />
-          </Button>
-        </div>
+        <h1 className="text-xl font-semibold">Đoạn chat</h1>{" "}
+        {/* Tiêu đề "Đoạn chat" */}
+        <HeaderButtons initialItems={items} users={users}/> {/* Button Add People */}
       </div>
       {/* Search */}
       <div className="p-4">
@@ -43,7 +38,7 @@ export async function LeftSidebar({
       </div>
       {/* Chat List */}
       <ConversationList currentUser={currentUser} initialItems={items} />
-      {/* <ChatList items={users} /> */}
+      <ChatList items={users} />
       {/* Children */}
       {children && <div className="flex-1">{children}</div>}
       {/* Footer */}

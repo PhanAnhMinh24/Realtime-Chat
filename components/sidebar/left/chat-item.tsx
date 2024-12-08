@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import axios from "axios";
 import Avatar from "@/components/message/avatar";
 import { Clock, Circle } from "lucide-react";
+import LoadingModal from "@/app/conversations/[conversationId]/components/loading-modal";
 
 interface ChatItemProps {
   data: User;
@@ -19,7 +20,7 @@ const ChatItem: React.FC<ChatItemProps> = ({
   lastMessageTime,
 }) => {
   const router = useRouter();
-  const [, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = useCallback(() => {
     setIsLoading(true);
@@ -38,31 +39,36 @@ const ChatItem: React.FC<ChatItemProps> = ({
   };
 
   return (
-    <div
-      onClick={handleClick}
-      className="w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-neutral-100 rounded-lg transition cursor-pointer"
-    >
-      <Avatar user={data} />
-      <div className="min-w-0 flex-1">
-        <div className="focus:outline-none">
-          <div className="flex justify-between items-center mb-1">
-            <p className="text-sm font-medium text-gray-900">{data.name}</p>
-            {lastMessageTime && (
-              <span className="text-xs text-gray-500 flex items-center">
-                <Clock className="w-3 h-3 mr-1" />
-                {formatTime(lastMessageTime)}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center">
-            <Circle className={`w-2 h-2 mr-2 text-green-500`} />
-            <p className="text-sm text-gray-500 truncate">
-              {lastMessage || "No messages yet"}
-            </p>
+    <>
+      {isLoading && <LoadingModal />}
+      <div
+        onClick={handleClick}
+        className={`w-full relative flex items-center space-x-3 bg-white p-3 hover:bg-neutral-100 rounded-lg transition cursor-pointer ${
+          isLoading ? "opacity-50 pointer-events-none" : ""
+        }`}
+      >
+        <Avatar user={data} />
+        <div className="min-w-0 flex-1">
+          <div className="focus:outline-none">
+            <div className="flex justify-between items-center mb-1">
+              <p className="text-sm font-medium text-gray-900">{data.name}</p>
+              {lastMessageTime && (
+                <span className="text-xs text-gray-500 flex items-center">
+                  <Clock className="w-3 h-3 mr-1" />
+                  {formatTime(lastMessageTime)}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center">
+              <Circle className={`w-2 h-2 mr-2 text-green-500`} />
+              <p className="text-sm text-gray-500 truncate">
+                {lastMessage || "No messages yet"}
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
