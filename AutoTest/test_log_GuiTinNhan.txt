@@ -1,0 +1,33 @@
+Navigating to sign-in page...
+Navigated to login page.
+Entered email: thuhue12tn1@gmail.com
+Clicked 'Next' button.
+Entered password.
+Clicked 'Next' button after entering password.
+
+Checking URL after login...
+Current URL: http://localhost:3000/
+URL verified successfully.
+
+Opening chat conversation...
+Clicked on chat element.
+Entered message: Hello!
+Clicked 'Send' button.
+Retrieved message text: Hello!
+Message and time checked successfully.
+
+Opening chat conversation...
+Clicked on chat element.
+Entered message: 
+Message is empty, skipping send.
+No message sent due to empty input.
+
+sent Message With Disconnect Internet
+Clicked on 'Messages' menu.
+Entered message: Hello!
+Clicked 'Send' button.
+Internet connection released.
+Disconnected from the internet.
+Internet connection restored.
+
+Browser closed.
