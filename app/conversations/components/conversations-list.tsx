@@ -1,35 +1,45 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // components/ConversationList.tsx
 "use client";
 
-import useConversation from "@/app/hooks/useConversation";
 import { FullConversationType } from "@/app/types";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ConversationBox from "./conversation-box";
 import { User } from "@prisma/client"; // Import the User type
 
 interface ConversationListProps {
   initialItems: FullConversationType[];
-  currentUser: User | null; // Add currentUser to the props
+  currentUser: User | null; // Pass currentUser as a prop
+  onSelectConversation: (conversation: FullConversationType) => void; // Handler for conversation selection
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({
   initialItems,
-  currentUser, // Accept currentUser as a prop
+  currentUser,
+  onSelectConversation,
 }) => {
-  const [items, setItem] = useState(initialItems);
+  const [conversations, setConversations] = useState<FullConversationType[]>(initialItems);
   const router = useRouter();
-  const { conversationId, isOpen } = useConversation();
+
+  useEffect(() => {
+    if (currentUser) {
+      setConversations(initialItems);
+    }
+  }, [initialItems, currentUser]);
+
+  const handleSelectConversation = (conversation: FullConversationType) => {
+    onSelectConversation(conversation);
+    router.push(`/conversations/${conversation.id}`);
+  };
 
   return (
-    <div className="h-[600px]">
-      {items.map((item) => (
+    <div>
+      {conversations.map((conversation) => (
         <ConversationBox
-          key={item.id}
-          data={item}
-          selected={conversationId === item.id}
-          currentUser={currentUser} // Pass currentUser to ConversationBox
+          key={conversation.id}
+          data={conversation}
+          currentUser={currentUser}
+          onClick={() => handleSelectConversation(conversation)}
         />
       ))}
     </div>

@@ -2,7 +2,7 @@ import { CurrentUser } from "@/lib/current-user";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-//PUT: Cập nhật tin nhắn
+//PUT: Chỉnh sửa tin nhắn
 export async function PUT(request: Request) {
   try {
     const currentUser = await CurrentUser();

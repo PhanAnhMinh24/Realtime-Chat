@@ -207,8 +207,8 @@ const BodySidebar: React.FC<IParams> = ({ conversationId }) => {
                             {getMediaCount("IMAGE")}
                           </span>
                         )}
-                        {renderImageContent()}
                       </Button>
+                        {renderImageContent()}
                       <Button
                         variant={activeMediaTab === "VIDEO" ? "default" : "ghost"}
                         className={cn(

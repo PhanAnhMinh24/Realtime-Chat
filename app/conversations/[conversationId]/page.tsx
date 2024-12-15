@@ -2,13 +2,13 @@ import Form from "./components/form";
 import Body from "./components/body";
 import Header from "./components/header";
 import InfoChatAvt from "./components/infochatavt";
-import { LeftSidebar } from "@/components/sidebar/left/left-side-bar";
 import { MainChatArea } from "@/components/main/main-chat-area";
 import getMessages from "@/lib/get-message";
 import { CurrentUser } from "@/lib/current-user";
 import getConversationById from "@/lib/get-conversation-by-id";
 import BodyRightSidebar from "./components/body-right-side-bar";
 import { RightSidebar } from "@/components/sidebar/right/right-side-bar";
+import LeftSidebar from "./components/left-side-bar";
 // ... rest of your imports
 
 interface IParams {
