@@ -43,7 +43,7 @@ const Home = async () => {
     <div className="flex h-screen bg-white text-gray-900">
       <LeftSidebar />
       <EmptyState/>
-      <RightSidebar />
+      <RightSidebar conversationId={""} />
     </div>
   );
 };

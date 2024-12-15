@@ -5,6 +5,7 @@ import { FullConversationType } from "@/app/types";
 import useOtherUser from "@/app/hooks/useOtherUser";
 import { useRouter } from "next/navigation";
 import Avatar from "@/components/message/avatar";
+import UserProfile from "@/components/sidebar/right/avatar";
 import { User } from "@prisma/client";
 import { format } from "date-fns";
 

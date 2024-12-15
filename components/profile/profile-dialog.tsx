@@ -1,27 +1,17 @@
 "use client"
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { ChevronRight } from 'lucide-react'
-import Image from "next/image"
+import { User } from "@prisma/client";
+import Image from "next/image";
 
 interface ProfileDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  user?: {
-    name: string
-    username: string
-    phone: string
-    image: string
-    isActive?: boolean
-  }
+  user?: User;
 }
 
-export function ProfileDialog({ open, onOpenChange, user }: ProfileDialogProps) {
-  if (!user) return null
+export const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onOpenChange, user }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -66,8 +56,8 @@ export function ProfileDialog({ open, onOpenChange, user }: ProfileDialogProps) 
             </svg>
             <div className="relative w-[100px] h-[100px] rounded-full overflow-hidden">
               <Image
-                src={user.image || "/placeholder.svg"}
-                alt={user.name}
+                src={user?.image || '/images/placeholder.jpg'}
+                alt="avatar"
                 fill
                 className="object-cover"
               />
@@ -75,7 +65,7 @@ export function ProfileDialog({ open, onOpenChange, user }: ProfileDialogProps) 
           </div>
 
           {/* User Name */}
-          <h2 className="text-xl font-semibold mb-6">{user.name}</h2>
+          <h2 className="text-xl font-semibold mb-6">{user?.name}</h2>
 
           {/* Info List */}
           <div className="w-full space-y-2">
@@ -88,19 +78,6 @@ export function ProfileDialog({ open, onOpenChange, user }: ProfileDialogProps) 
               <div className="flex items-center text-gray-500">
                 <span className="text-sm mr-2">On</span>
                 <ChevronRight className="w-4 h-4" />
-              </div>
-            </div>
-
-            {/* Username */}
-            <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
-                  <span className="text-white text-xs">@</span>
-                </div>
-                <span className="text-sm">Username</span>
-              </div>
-              <div className="flex items-center text-gray-500">
-                <span className="text-sm mr-2">{user.username}</span>
               </div>
             </div>
 
@@ -118,10 +95,10 @@ export function ProfileDialog({ open, onOpenChange, user }: ProfileDialogProps) 
                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                   </svg>
                 </div>
-                <span className="text-sm">Phone</span>
+                <span className="text-sm">Email</span>
               </div>
               <div className="flex items-center text-gray-500">
-                <span className="text-sm mr-2">{user.phone}</span>
+                <span className="text-sm mr-2">{user?.email}</span>
                 <ChevronRight className="w-4 h-4" />
               </div>
             </div>
@@ -131,4 +108,3 @@ export function ProfileDialog({ open, onOpenChange, user }: ProfileDialogProps) 
     </Dialog>
   )
 }
-
