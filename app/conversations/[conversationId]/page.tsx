@@ -36,7 +36,6 @@ const ConversationId = async ({ params }: { params: IParams }) => {
         <Body initialMessages={messages} currentUser={currentUser} />
         <Form />
       </div>
-      <RightSidebar />
       <div>
         <InfoChatAvt conversation={conversation} currentUser={currentUser} />
         <BodyRightSidebar conversationId={conversation?.id} />
