@@ -8,6 +8,7 @@ import getConversations from "@/lib/get-conversations";
 import { CurrentUser } from "@/lib/current-user";
 import getUsers from "@/lib/get-users";
 import ChatList from "./chat-list";
+import { FullConversationType } from "@/app/types";
 
 export async function LeftSidebar({
   children,
@@ -42,7 +43,9 @@ export async function LeftSidebar({
         </div>
       </div>
       {/* Chat List */}
-      <ConversationList currentUser={currentUser} initialItems={items} />
+      <ConversationList currentUser={currentUser} initialItems={items} onSelectConversation={function (conversation: FullConversationType): void {
+        throw new Error("Function not implemented.");
+      } } />
       {/* <ChatList items={users} /> */}
       {/* Children */}
       {children && <div className="flex-1">{children}</div>}
