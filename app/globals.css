@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import '~stream-chat-react/dist/css/v2/index.css';
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  --discord-purple: #7289da;
+  --dark-discord: #4752c4;
+
+  --gray-normal: #313338;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+.str-chat {
+  --str-chat__message-list-background-color: white;
+  --str-chat__spacing-10: 0;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 5rem auto 1fr;
+}
+
+::backdrop {
+  background-image: linear-gradient(-45deg, #7289da, rebeccapurple);
+  opacity: 0.5;
+}
+
+.labelTitle {
+  @apply uppercase text-sm font-bold text-gray-600;
+}
+
+input,
+select {
+  @apply w-full p-2 rounded;
+}
+
+input[type='text'] {
+  @apply bg-transparent outline-transparent;
+}
+
+input[type='text']:focus {
+  outline: none;
+}
+
+input[type='radio'] {
+  @apply w-8 h-8 mb-0;
+  accent-color: black;
+}
+
+.rounded-icon {
+  @apply transition-all ease-in-out duration-200 aspect-square object-cover;
+  border-radius: 50%;
+}
+
+.rounded-icon:hover {
+  border-radius: 1rem;
+}
+
+.sidebar-icon {
+  @apply flex items-center justify-center w-full relative transition-all ease-in-out duration-200;
+}
+
+.sidebar-icon::before {
+  @apply transition-all duration-200 ease-in-out;
+  --content-height: 0rem;
+  --content-width: 0rem;
+  --offset: -0.4rem;
+  content: '';
+  display: block;
+  height: var(--content-height);
+  width: var(--content-width);
+  background: black;
+  position: absolute;
+  border-radius: 3px;
+  left: var(--offset);
+}
+
+.sidebar-icon:hover::before {
+  --content-height: 1.25rem;
+  --content-width: 0.5rem;
+  --offset: -0.15rem;
+}
+
+.selected-icon::before {
+  --content-height: 2rem;
+  --content-width: 0.5rem;
+  --offset: -0.15rem;
+}
+
+.discord-icon {
+  @apply bg-white p-3 w-full h-full;
+  content: '';
+
+  background: url('../assets/discord-black.svg') no-repeat center center, white;
+  background-origin: content-box;
+}
+
+.discord-icon:hover {
+  background: url('../assets/discord-white.svg') no-repeat center center,
+    var(--discord-purple);
+  background-origin: content-box;
+  --offset: 1.5rem;
+}
+
+.online-icon::after {
+  @apply block absolute h-4 w-4 bg-green-600 bottom-0 right-0 rounded-full border-2 border-gray-200;
+  content: '';
+}
+
+.inactive-icon::after {
+  @apply block absolute h-full w-0.5 bg-red-400 rotate-45 rounded-xl m-2;
+  content: '';
+}
+
+.channel-container {
+  @apply relative;
+}
+
+.channel-container::before {
+  @apply block absolute h-2 w-3 -left-4 bg-gray-700 rounded-xl;
+  content: '';
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 20 14.3% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14.3% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14.3% 4.1%;
+    --primary: 24 9.8% 10%;
+    --primary-foreground: 60 9.1% 97.8%;
+    --secondary: 60 4.8% 95.9%;
+    --secondary-foreground: 24 9.8% 10%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+    --accent: 60 4.8% 95.9%;
+    --accent-foreground: 24 9.8% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 20 14.3% 4.1%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 20 14.3% 4.1%;
+    --foreground: 60 9.1% 97.8%;
+    --card: 20 14.3% 4.1%;
+    --card-foreground: 60 9.1% 97.8%;
+    --popover: 20 14.3% 4.1%;
+    --popover-foreground: 60 9.1% 97.8%;
+    --primary: 60 9.1% 97.8%;
+    --primary-foreground: 24 9.8% 10%;
+    --secondary: 12 6.5% 15.1%;
+    --secondary-foreground: 60 9.1% 97.8%;
+    --muted: 12 6.5% 15.1%;
+    --muted-foreground: 24 5.4% 63.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 60 9.1% 97.8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 12 6.5% 15.1%;
+    --input: 12 6.5% 15.1%;
+    --ring: 24 5.7% 82.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
